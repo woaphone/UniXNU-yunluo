@@ -38,7 +38,8 @@ limits = ["The old FV embeds loader/application modules; a cust chainload path h
 next_action = ["Separate FV integration from cust EFI files, then prove the actual cust entry load path without the old ramdisk fallback."]
 evidence = [
   { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." },
-  { kind = "source", reference = "docs/evidence/publication-scope.md", result = "Published loader reference and paired firmware provenance, with unresolved format-2 integration and device scope." }
+  { kind = "source", reference = "docs/evidence/publication-scope.md", result = "Published loader reference and paired firmware provenance, with unresolved format-2 integration and device scope." },
+  { kind = "host", reference = "docs/evidence/publication-host-checks.json", result = "PASS: production largest-window helper and source models under ASan/UBSan, plus normal/base record checks. No device allocation or complete runtime build.", command = "gcc -O1 -g -Wall -Wextra -fsanitize=address,undefined -I loader/DarwinBoot/DarwinBootPkg/Driver tests/largest-window.c -o out/largest-window && ./out/largest-window", revision = "db777162eccdde5c6854750786e24fa8e6afe52b" }
 ]
 
 [[area]]

@@ -1,0 +1,31 @@
+{
+  "revision": "db777162eccdde5c6854750786e24fa8e6afe52b",
+  "checks": [
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/porting-record.py",
+        "check",
+        "--device",
+        "../UniXNU-yunluo"
+      ],
+      "returncode": 0,
+      "output": "yunluo: 13 structured areas checked\n"
+    },
+    {
+      "command": [
+        "python3",
+        "-B",
+        "scripts/porting-record.py",
+        "check",
+        "--device",
+        "../UniXNU-yunluo",
+        "--base",
+        "0a51ff5f710a2bc8c2e51cb5fc5e3feedc348ee2"
+      ],
+      "returncode": 0,
+      "output": "yunluo: 13 structured areas checked\n"
+    }
+  ]
+}
