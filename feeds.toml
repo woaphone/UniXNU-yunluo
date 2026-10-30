@@ -1,0 +1,2 @@
+# A published, reviewed MT6789 SoC feed is required before release.
+# For local qualification only, pass --local-module soc:mt6789=<checkout> and record its exact commit.

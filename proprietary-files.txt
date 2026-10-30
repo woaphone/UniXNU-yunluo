@@ -1,0 +1,3 @@
+# No private firmware is distributed in this clean repository.
+# The exact yunluo touch blob source/hash and extraction recipe must be qualified before a runtime build.
+# Do not copy the inherited sheng download URL or commit a generated firmware array.

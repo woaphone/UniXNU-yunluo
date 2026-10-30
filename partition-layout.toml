@@ -1,0 +1,17 @@
+# Port-specific artifact ownership record; not an upstream board-schema extension.
+schema_version = 1
+
+[boot]
+role = "mu-silicium-firmware"
+include_unixnu_payload = false
+
+[cust]
+role = "unixnu-runtime-and-payload"
+partition_geometry_verified = false
+filesystem_verified = false
+firmware_load_path_verified = false
+
+[safety]
+flash_authorized = false
+format_authorized = false
+device_boot_authorized = false

@@ -1,0 +1,41 @@
+schema_version = 2
+
+[board]
+name = "yunluo"
+soc = "MT6789"
+soc_source = "mt6789"
+os_profile = "ipados-17.7.11-21H461"
+description = "Redmi Pad format-2 qualification candidate; boot Mu and cust UniXNU must remain separate"
+kit = "yunluo"
+
+[components]
+include = ["ArmDTPlatform", "ArmCpu", "SoftwareAES", "XnuPrelink", "DarwinBoot"]
+
+[kernel]
+defconfig = "yunluo_defconfig"
+config_fragments = ["arch:configs/common.config", "soc:configs/mt6789.config", "os:configs/ipados.config"]
+patch_series = ["arch:patches/xnu/series", "soc:patches/xnu/series", "os:patches/xnu/series", "device:patches/xnu/series"]
+archives = ["build-corecrypto-14.py", "build-corecrypto-14.py --namespace", "component:ArmDTPlatform", "component:ArmCpu", "component:SoftwareAES", "build-software-aes-bindings.py", "build-mockfs-fixture.py", "build-libpthread-kernel.py"]
+
+[device_tree]
+source = "device:dts/yunluo.dts"
+include_dirs = ["soc:dts"]
+
+[payload]
+volume = "YUNLUOCUST"
+loader = "files"
+title = "yunluo cust qualification candidate - not boot qualified"
+kernel_args = ["-v", "serial=0", "sheng-data-persist=0"]
+
+[payload.adt]
+chip_id = "0x8011"
+owned_memory_size = "0xa0000000"
+root_match_volume_uuid = "04769D26-2CA0-4825-B443-E2E5F88300F2"
+unique_chip_id = "required"
+
+[adt.defaults.u32]
+"kern.maxvnodes" = 32768
+
+[bootimg.image]
+header_version = 4
+pagesize = 4096
