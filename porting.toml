@@ -10,11 +10,11 @@ summary = "Redmi Pad MT6789 format-2 qualification; Mu in boot, UniXNU in cust. 
 id = "configuration"
 status = "planned"
 components = ["ArmDTPlatform", "SoftwareAES"]
-paths = ["board.toml", "feeds.toml", "configs/**", ".gitignore", ".github/**", "LICENSE", "AGENTS.md"]
+paths = ["board.toml", "feeds.toml", "configs/**", ".gitignore", ".github/**", "LICENSE", "AGENTS.md", "local.toml.example", "unixnu.lock"]
 inputs = ["Current format-2 framework, selected OS profile, local MT6789 SoC commit d179fac7d291ae05b3546aa0abe04bf1a17475ca"]
 configuration = ["Profiles resolve in arch/SoC/OS/device order; arrays replace inherited arrays."]
 procedure = ["Use the corresponding current UniXNU common guide; preserve source pins and collect the result before progressing.", "Integrate every required runtime component and publish reviewed SoC/component pins before enabling an image build."]
-findings = ["Only the qualification core is selected. The full legacy MTK storage/input/display archive set is not yet migrated; this is not baseline equivalence."]
+findings = ["Only the qualification core is selected. The full legacy MTK storage/input/display archive set is not yet migrated; this is not baseline equivalence.", "The initial public WIP pins woaphone/UniXNU-mt6789-common at cad9262392dd589b75c7c9bf38f3f6c256be6c31 and supplies an ignored local override example. It is source publication, not a completed runtime migration."]
 completion = ["All source pins resolve; every selected component has a record; status shows the intended overrides and patch order."]
 limits = ["Only the qualification core is selected. The full legacy MTK storage/input/display archive set is not yet migrated; this is not baseline equivalence."]
 next_action = ["Integrate every required runtime component and publish reviewed SoC/component pins before enabling an image build."]
@@ -28,16 +28,17 @@ evidence = [
 id = "firmware"
 status = "planned"
 components = ["DarwinBoot"]
-paths = ["proprietary-files.txt", "firmware/**", "partition-layout.toml", "scripts/check-partition-layout.py"]
+paths = ["proprietary-files.txt", "firmware/**", "partition-layout.toml", "scripts/check-partition-layout.py", "loader/**"]
 inputs = ["Mu-Silicium platform firmware, BootShim and stock boot/vendor_boot protocol inputs."]
 configuration = ["boot contains Mu firmware only; UniXNU and file-loaded DarwinBoot belong in cust."]
 procedure = ["Use the corresponding current UniXNU common guide; preserve source pins and collect the result before progressing.", "Separate FV integration from cust EFI files, then prove the actual cust entry load path without the old ramdisk fallback."]
-findings = ["The old FV embeds loader/application modules; a cust chainload path has not been built or tested.", "Boot-Mu/cust-UniXNU separation is enforced as a source-policy and release gate; cust geometry/discovery remain unknown, so the build-readiness gate correctly refuses progression."]
+findings = ["The format-2 candidate has not built a complete cust chainload path.", "The independent v4 firmware and cust-v2 artifacts have source/offline evidence, but are not a clean build of this format-2 configuration.", "loader/ publishes the exact source-only largest-window reference and its provenance. It is not yet selected by the board build; no new device or desktop result is claimed."]
 completion = ["Firmware image builds, enters UniXNU, publishes the framebuffer and preserves the documented memory reservations."]
 limits = ["The old FV embeds loader/application modules; a cust chainload path has not been built or tested."]
 next_action = ["Separate FV integration from cust EFI files, then prove the actual cust entry load path without the old ramdisk fallback."]
 evidence = [
-  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." }
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." },
+  { kind = "source", reference = "docs/evidence/publication-scope.md", result = "Published loader reference and paired firmware provenance, with unresolved format-2 integration and device scope." }
 ]
 
 [[area]]
@@ -61,11 +62,11 @@ evidence = [
 id = "memory"
 status = "planned"
 components = []
-paths = ["dts/**", "scripts/*memory*"]
+paths = ["dts/**", "scripts/*memory*", "tests/largest-window.c"]
 inputs = ["Six-GiB board DRAM declaration, 2.5-GiB requested loader window, existing reservations and DMA ownership."]
 configuration = ["DRAM starts at 0x40000000; requested owned window 0xa0000000, not proof of a new allocation."]
 procedure = ["Use the corresponding current UniXNU common guide; preserve source pins and collect the result before progressing.", "Account for every firmware reservation and DMA engine; compare generated ADT and actual loader allocation."]
-findings = ["No new DMA/SMMU/reservation qualification; historical 2.5-GiB log is not evidence for this proposed branch."]
+findings = ["No new DMA/SMMU/reservation qualification; historical 2.5-GiB log is not evidence for this proposed branch.", "The largest-window source helper and tests preserve reserved edges and real allocation accounting. This source reference is not yet enabled by the format-2 candidate and does not prove successful device allocation."]
 completion = ["All handoff regions are accounted for and each enabled DMA engine accesses its allocated range with the documented cache policy."]
 limits = ["No new DMA/SMMU/reservation qualification; historical 2.5-GiB log is not evidence for this proposed branch."]
 next_action = ["Account for every firmware reservation and DMA engine; compare generated ADT and actual loader allocation."]
@@ -115,7 +116,7 @@ paths = ["drivers/NativeNovatekTouch/**", "package/BoardKeyState.h", "tests/**",
 inputs = ["Yunluo PMIC state helper plus reusable Novatek protocol/core models; actual MTK bus/IRQ and yunluo sensor firmware remain separate inputs."]
 configuration = ["Power uses TOPSTATUS bit1, volume-up bit3; inherited Qcom clock/pin/SMMU helpers are excluded."]
 procedure = ["Use the corresponding current UniXNU common guide; preserve source pins and collect the result before progressing.", "Run scoped host regressions and qualify the actual sensor/firmware/bus/HID ABI before claiming touch works."]
-findings = ["Novatek tests model NT36532-family behavior, not a physical yunluo sensor. No real firmware blob, SPI rate, IRQ or HID consumer path is qualified here.", "Committed-source host models pass; their scope excludes real firmware, MTK bus timing, physical keys, IRQ and HID consumers. The area remains planned as an end-to-end input capability."]
+findings = ["Novatek tests model NT36532-family behavior, not a physical yunluo sensor. No real firmware blob, SPI rate, IRQ or HID consumer path is qualified here.", "Committed-source host models pass; their scope excludes real firmware, MTK bus timing, physical keys, IRQ and HID consumers. The area remains planned as an end-to-end input capability.", "The added largest-window host test is a loader arithmetic test, not additional physical input or HID qualification."]
 completion = ["Touches map to the display, simultaneous contacts keep stable IDs, release events arrive, and buttons produce expected HID reports."]
 limits = ["Novatek tests model NT36532-family behavior, not a physical yunluo sensor. No real firmware blob, SPI rate, IRQ or HID consumer path is qualified here."]
 next_action = ["Run scoped host regressions and qualify the actual sensor/firmware/bus/HID ABI before claiming touch works."]

@@ -1,0 +1,5 @@
+# Copy to the ignored local.toml only when developing local SoC changes.
+[[source]]
+kind = "soc"
+name = "mt6789"
+local = "../UniXNU-mt6789-common"

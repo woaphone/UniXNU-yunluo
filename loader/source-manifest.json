@@ -1,0 +1,66 @@
+{
+  "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39",
+  "files": [
+    {
+      "path": "DarwinBootPkg/DarwinBoot.dsc",
+      "sha256": "7dcdf998c45dcd9e37c98fc3bcc0992ee2dcb5dd0b2b50bc1c52e71b11ec2993",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    },
+    {
+      "path": "DarwinBootPkg/Driver/BootArgs.h",
+      "sha256": "1d6b172a306bf5d3fc409d22bd7e674d166e5fde92652c4135de5c79f3eddd16",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    },
+    {
+      "path": "DarwinBootPkg/Driver/BootVideo.h",
+      "sha256": "578447d8036e77a80f481a555a76a0e3caa7f969a8e4187b7307d34b3e5debdd",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    },
+    {
+      "path": "DarwinBootPkg/Driver/DarwinBoot.c",
+      "sha256": "871a0cc2336b8e81b3e253ea3c45095ff7dfdbd8380862e79f80554a9c2c9759",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    },
+    {
+      "path": "DarwinBootPkg/Driver/DarwinBoot.inf",
+      "sha256": "cb10851277b53b355794c1bca3fa16d3bf18a0dc2dee857091837b63599019df",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    },
+    {
+      "path": "DarwinBootPkg/Driver/DiagFont.h",
+      "sha256": "d2a3687db67b069f4e34a961e17fd28b0242986e3fa8dd8a7545cab70834fa8e",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    },
+    {
+      "path": "DarwinBootPkg/Driver/Entry.S",
+      "sha256": "72d63bede2d0eac7179ac4f1048a5312d97f210c8362111dafb71e289b403f56",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    },
+    {
+      "path": "DarwinBootPkg/Driver/LargestWindow.h",
+      "sha256": "285739c4b052355f460d15f51b76cd0ce544c68c079a34eafcae89d605b2a8ac",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    },
+    {
+      "path": "DarwinBootPkg/Driver/PackedRamdisk.h",
+      "sha256": "8b3a326062baee88a179274e92df05a3a07792d25ef84daa23b71aa47b4a2326",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    },
+    {
+      "path": "DarwinBootPkg/Driver/WindowSize.h",
+      "sha256": "6f78303c54252eae722be7c9b33869e4e8251ee3569736511790170d499b58cb",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    },
+    {
+      "path": "LICENSE",
+      "sha256": "513308769e962347c3b987ddac32f5f5c9849acced235e5580ab2c7ebf067900",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    },
+    {
+      "path": "README.md",
+      "sha256": "7633854c8805f8ec507c2e338b52253aeacc75b90a116c91c4f4e1a8a0bfbada",
+      "source_commit": "efdc6bdff768cfe149b0a39f978ddd921fd8eb39"
+    }
+  ],
+  "selected_by_format2_candidate": false
+}
