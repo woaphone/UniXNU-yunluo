@@ -1,0 +1,26 @@
+{
+  "name": "pmic-state",
+  "revision": "238f33cda2750f52c19748607cee6ca56f56e2a3",
+  "compile_command": [
+    "/usr/bin/g++",
+    "-O1",
+    "-g",
+    "-Wall",
+    "-Wextra",
+    "-fsanitize=address,undefined",
+    "-fno-sanitize-recover=all",
+    "-fno-omit-frame-pointer",
+    "-std=c++17",
+    "tests/board-key-state.cpp",
+    "-o",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/host-committed/pmic-state"
+  ],
+  "compile_returncode": 0,
+  "compile_output": "",
+  "run_command": [
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/host-committed/pmic-state"
+  ],
+  "run_returncode": 0,
+  "run_output": "PASS: 4096 PMIC state combinations plus polling; register model only, no hardware\n",
+  "scope": "Host source/model only. No physical bus, firmware download, IRQ, HID client, or board boot is qualified."
+}

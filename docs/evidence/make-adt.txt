@@ -1,0 +1,27 @@
+{
+  "name": "make-adt",
+  "revision": "238f33cda2750f52c19748607cee6ca56f56e2a3",
+  "framework_revision": "066c8d8315f83749d28bcae2faf3595718646be5",
+  "command": [
+    "python3",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/UniXNU/scripts/make-adt.py",
+    "--dtb",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/structural-committed/hardware.dtb",
+    "--os-profile",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/UniXNU/profiles/os/ipados-17.7.11-21H461/profile.toml",
+    "--board",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/board.toml",
+    "--unique-chip-id",
+    "0x594c4e554d543637",
+    "--data-ramdisk",
+    "--trust-cache",
+    "--output",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/structural-committed/kernel.macho.adt"
+  ],
+  "returncode": 0,
+  "expected_returncode": 0,
+  "expected_result_met": true,
+  "stdout": "ADT: /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/structural-committed/kernel.macho.adt (13992 bytes)\n",
+  "stderr": "",
+  "scope": "Host structural/source test only; not a full runtime or device qualification."
+}

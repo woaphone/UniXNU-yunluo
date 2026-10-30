@@ -1,0 +1,17 @@
+{
+  "name": "old-monolithic-image-rejection",
+  "revision": "238f33cda2750f52c19748607cee6ca56f56e2a3",
+  "framework_revision": "066c8d8315f83749d28bcae2faf3595718646be5",
+  "command": [
+    "python3",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/scripts/check-partition-layout.py",
+    "--boot-image",
+    "/mnt/d/\u6f0f\u6d1e/UNIXNU/bringup/uefi/boot-yunluo-unixnu-inputfix6-smp8-mmioipi-2g.img"
+  ],
+  "returncode": 1,
+  "expected_returncode": 1,
+  "expected_result_met": true,
+  "stdout": "",
+  "stderr": "boot ramdisk is nonempty; cust-separated UniXNU must not be embedded there\n",
+  "scope": "Host structural/source test only; not a full runtime or device qualification."
+}

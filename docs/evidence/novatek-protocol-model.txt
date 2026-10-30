@@ -1,0 +1,27 @@
+{
+  "name": "novatek-protocol-model",
+  "revision": "238f33cda2750f52c19748607cee6ca56f56e2a3",
+  "compile_command": [
+    "/usr/bin/gcc",
+    "-O1",
+    "-g",
+    "-Wall",
+    "-Wextra",
+    "-fsanitize=address,undefined",
+    "-fno-sanitize-recover=all",
+    "-fno-omit-frame-pointer",
+    "-std=c11",
+    "drivers/NativeNovatekTouch/Test/nvt-protocol.c",
+    "drivers/NativeNovatekTouch/NvtProtocol.c",
+    "-o",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/host-committed/novatek-protocol-model"
+  ],
+  "compile_returncode": 0,
+  "compile_output": "",
+  "run_command": [
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/host-committed/novatek-protocol-model"
+  ],
+  "run_returncode": 0,
+  "run_output": "PASS (framing/identify/frame tests); real-firmware tests skipped: pass the firmware path\n",
+  "scope": "Host source/model only. No physical bus, firmware download, IRQ, HID client, or board boot is qualified."
+}

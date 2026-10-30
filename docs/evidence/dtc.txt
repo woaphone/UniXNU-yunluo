@@ -1,0 +1,23 @@
+{
+  "name": "dtc",
+  "revision": "238f33cda2750f52c19748607cee6ca56f56e2a3",
+  "framework_revision": "066c8d8315f83749d28bcae2faf3595718646be5",
+  "command": [
+    "dtc",
+    "-I",
+    "dts",
+    "-O",
+    "dtb",
+    "-i",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-mt6789-common/dts",
+    "-o",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/structural-committed/hardware.dtb",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/dts/yunluo.dts"
+  ],
+  "returncode": 0,
+  "expected_returncode": 0,
+  "expected_result_met": true,
+  "stdout": "",
+  "stderr": "",
+  "scope": "Host structural/source test only; not a full runtime or device qualification."
+}

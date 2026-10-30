@@ -1,0 +1,61 @@
+{
+  "new_common_adt_cpus": [
+    {
+      "name": "cpu0",
+      "reg": 0,
+      "has_cpu_id": false,
+      "has_reg_private": false,
+      "compatible": "arm,cortex-a55"
+    },
+    {
+      "name": "cpu1",
+      "reg": 256,
+      "has_cpu_id": false,
+      "has_reg_private": false,
+      "compatible": "arm,cortex-a55"
+    },
+    {
+      "name": "cpu2",
+      "reg": 512,
+      "has_cpu_id": false,
+      "has_reg_private": false,
+      "compatible": "arm,cortex-a55"
+    },
+    {
+      "name": "cpu3",
+      "reg": 768,
+      "has_cpu_id": false,
+      "has_reg_private": false,
+      "compatible": "arm,cortex-a55"
+    },
+    {
+      "name": "cpu4",
+      "reg": 1024,
+      "has_cpu_id": false,
+      "has_reg_private": false,
+      "compatible": "arm,cortex-a55"
+    },
+    {
+      "name": "cpu5",
+      "reg": 1280,
+      "has_cpu_id": false,
+      "has_reg_private": false,
+      "compatible": "arm,cortex-a55"
+    },
+    {
+      "name": "cpu6",
+      "reg": 1536,
+      "has_cpu_id": false,
+      "has_reg_private": false,
+      "compatible": "arm,cortex-a76"
+    },
+    {
+      "name": "cpu7",
+      "reg": 1792,
+      "has_cpu_id": false,
+      "has_reg_private": false,
+      "compatible": "arm,cortex-a76"
+    }
+  ],
+  "scope": "Source/host observation; compare against selected ArmCpu/AppleARMCPU consumers before boot. Do not assume this is a proven upstream defect."
+}

@@ -1,0 +1,20 @@
+{
+  "name": "record-base-check",
+  "revision": "238f33cda2750f52c19748607cee6ca56f56e2a3",
+  "framework_revision": "066c8d8315f83749d28bcae2faf3595718646be5",
+  "command": [
+    "python3",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/UniXNU/scripts/porting-record.py",
+    "check",
+    "--device",
+    "/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo",
+    "--base",
+    "porting-import-base"
+  ],
+  "returncode": 0,
+  "expected_returncode": 0,
+  "expected_result_met": true,
+  "stdout": "yunluo: 13 structured areas checked\n",
+  "stderr": "",
+  "scope": "Host structural/source test only; not a full runtime or device qualification."
+}

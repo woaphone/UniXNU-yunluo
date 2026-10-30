@@ -18,21 +18,27 @@ findings = ["Only the qualification core is selected. The full legacy MTK storag
 completion = ["All source pins resolve; every selected component has a record; status shows the intended overrides and patch order."]
 limits = ["Only the qualification core is selected. The full legacy MTK storage/input/display archive set is not yet migrated; this is not baseline equivalence."]
 next_action = ["Integrate every required runtime component and publish reviewed SoC/component pins before enabling an image build."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." },
+  { kind = "host", reference = "docs/evidence/defconfig.txt", result = "PASS: format-2 profile/defconfig generation on the explicit local SoC source; not a kernel build.", command = "python3 /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/UniXNU/unixnu defconfig yunluo_defconfig -D /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo --local-module soc:mt6789=/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-mt6789-common --out /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/structural-committed/configured", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" },
+  { kind = "host", reference = "docs/evidence/configured-status.txt", result = "PASS: configured=true and five core components resolve; this is not the complete legacy runtime.", command = "python3 /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/UniXNU/unixnu status --json -D /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo --local-module soc:mt6789=/home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-mt6789-common --out /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/structural-committed/configured", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" }
+]
 
 [[area]]
 id = "firmware"
 status = "planned"
 components = ["DarwinBoot"]
-paths = ["proprietary-files.txt", "firmware/**"]
+paths = ["proprietary-files.txt", "firmware/**", "partition-layout.toml", "scripts/check-partition-layout.py"]
 inputs = ["Mu-Silicium platform firmware, BootShim and stock boot/vendor_boot protocol inputs."]
 configuration = ["boot contains Mu firmware only; UniXNU and file-loaded DarwinBoot belong in cust."]
 procedure = ["Use the corresponding current UniXNU common guide; preserve source pins and collect the result before progressing.", "Separate FV integration from cust EFI files, then prove the actual cust entry load path without the old ramdisk fallback."]
-findings = ["The old FV embeds loader/application modules; a cust chainload path has not been built or tested."]
+findings = ["The old FV embeds loader/application modules; a cust chainload path has not been built or tested.", "Boot-Mu/cust-UniXNU separation is enforced as a source-policy and release gate; cust geometry/discovery remain unknown, so the build-readiness gate correctly refuses progression."]
 completion = ["Firmware image builds, enters UniXNU, publishes the framebuffer and preserves the documented memory reservations."]
 limits = ["The old FV embeds loader/application modules; a cust chainload path has not been built or tested."]
 next_action = ["Separate FV integration from cust EFI files, then prove the actual cust entry load path without the old ramdisk fallback."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." }
+]
 
 [[area]]
 id = "cpu"
@@ -44,9 +50,12 @@ configuration = ["Board DTS includes the MT6789 DTSI; selected CPU driver and Ap
 procedure = ["Use the corresponding current UniXNU common guide; preserve source pins and collect the result before progressing.", "Compare reg/cpu-id/reg-private and GIC ranges against the preserved working ABI before a new boot."]
 findings = ["A DTS compile cannot prove CPU start or IPIs; old ADT vs current common-converter CPU properties need comparison."]
 completion = ["Every enabled CPU reaches its entry checkpoint and timer/IPI handling works on each enabled CPU."]
-limits = ["A DTS compile cannot prove CPU start or IPIs; old ADT vs current common-converter CPU properties need comparison."]
+limits = ["A DTS compile cannot prove CPU start or IPIs; old ADT vs current common-converter CPU properties need comparison.", "New common output omits cpu-id/no-aic-ipi-required present in the preserved working generator; validate the selected component/kext consumers before boot."]
 next_action = ["Compare reg/cpu-id/reg-private and GIC ranges against the preserved working ABI before a new boot."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." },
+  { kind = "host", reference = "docs/evidence/dtc.txt", result = "PASS: sourced eight-CPU/GIC/timer description compiles without diagnostics; not CPU start/IPI proof.", command = "dtc -I dts -O dtb -i /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-mt6789-common/dts -o /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/structural-committed/hardware.dtb /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/dts/yunluo.dts", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" }
+]
 
 [[area]]
 id = "memory"
@@ -60,21 +69,27 @@ findings = ["No new DMA/SMMU/reservation qualification; historical 2.5-GiB log i
 completion = ["All handoff regions are accounted for and each enabled DMA engine accesses its allocated range with the documented cache policy."]
 limits = ["No new DMA/SMMU/reservation qualification; historical 2.5-GiB log is not evidence for this proposed branch."]
 next_action = ["Account for every firmware reservation and DMA engine; compare generated ADT and actual loader allocation."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." },
+  { kind = "host", reference = "docs/evidence/make-adt.txt", result = "PASS: common ADT conversion on synthetic host identity, declared memory and placeholders; no allocation/DMA proof.", command = "python3 /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/UniXNU/scripts/make-adt.py --dtb /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/structural-committed/hardware.dtb --os-profile /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/UniXNU/profiles/os/ipados-17.7.11-21H461/profile.toml --board /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/board.toml --unique-chip-id 0x594c4e554d543637 --data-ramdisk --trust-cache --output /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/structural-committed/kernel.macho.adt", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" }
+]
 
 [[area]]
 id = "storage"
 status = "planned"
 components = []
-paths = ["storage/**", "drivers/NativeMtkUfs/**", "scripts/*storage*"]
+paths = ["storage/**", "drivers/NativeMtkUfs/**", "scripts/*storage*", "partition-layout.toml", "scripts/check-partition-layout.py"]
 inputs = ["MTK UFS LU2/4096-byte blocks and host 0x11270000/0x2300; actual cust GPT/LP identity and capacity are required."]
 configuration = ["cust owns the separate UniXNU filesystem. Persistent Data is independent and is not enabled by this layout."]
 procedure = ["Use the corresponding current UniXNU common guide; preserve source pins and collect the result before progressing.", "Obtain saved GPT/LP metadata, qualify direct firmware visibility, and migrate the real MTK transport without Qualcomm aliases."]
-findings = ["No cust geometry/type/GUID/filesystem has been established. NativeMtkUfs is not ShengUfs; UFS transport is not in this core-only candidate."]
-completion = ["Host: register, clock, link and SMMU facts match the board inventory.", "Reads: SCSI capacity, GPT and known blocks are correct; OS/SystemOS windows stay within userdata.", "Root: the configured volume mounts and launchd starts. Persistence: writes survive reboot within the allocated Data region."]
+findings = ["No cust geometry/type/GUID/filesystem has been established. NativeMtkUfs is not ShengUfs; UFS transport is not in this core-only candidate.", "Boot-Mu/cust-UniXNU separation is enforced as a source-policy and release gate; cust geometry/discovery remain unknown, so the build-readiness gate correctly refuses progression."]
+completion = ["Actual cust partition type/capacity and firmware block/filesystem visibility are established without guessed geometry.", "Qualified MTK reads identify GPT/LUN/root windows correctly and launchd starts; persistent Data tests remain a separate explicit scope/authorization."]
 limits = ["No cust geometry/type/GUID/filesystem has been established. NativeMtkUfs is not ShengUfs; UFS transport is not in this core-only candidate."]
 next_action = ["Obtain saved GPT/LP metadata, qualify direct firmware visibility, and migrate the real MTK transport without Qualcomm aliases."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." },
+  { kind = "host", reference = "docs/evidence/build-readiness-rejection.txt", result = "Expected refusal: actual cust geometry, filesystem and firmware load-path verification are still missing.", command = "python3 /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/scripts/check-partition-layout.py --require-build-ready", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" }
+]
 
 [[area]]
 id = "display"
@@ -88,7 +103,9 @@ findings = ["No display runtime or physical presentation is qualified on this br
 completion = ["A known frame appears with correct geometry and colors, then userland presentation and backlight controls work."]
 limits = ["No display runtime or physical presentation is qualified on this branch; unknown SIGBUS fault PC remains unresolved."]
 next_action = ["Port the actual display component and probe lifecycle, then test a known frame and userspace presentation."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." }
+]
 
 [[area]]
 id = "input"
@@ -98,11 +115,16 @@ paths = ["drivers/NativeNovatekTouch/**", "package/BoardKeyState.h", "tests/**",
 inputs = ["Yunluo PMIC state helper plus reusable Novatek protocol/core models; actual MTK bus/IRQ and yunluo sensor firmware remain separate inputs."]
 configuration = ["Power uses TOPSTATUS bit1, volume-up bit3; inherited Qcom clock/pin/SMMU helpers are excluded."]
 procedure = ["Use the corresponding current UniXNU common guide; preserve source pins and collect the result before progressing.", "Run scoped host regressions and qualify the actual sensor/firmware/bus/HID ABI before claiming touch works."]
-findings = ["Novatek tests model NT36532-family behavior, not a physical yunluo sensor. No real firmware blob, SPI rate, IRQ or HID consumer path is qualified here."]
+findings = ["Novatek tests model NT36532-family behavior, not a physical yunluo sensor. No real firmware blob, SPI rate, IRQ or HID consumer path is qualified here.", "Committed-source host models pass; their scope excludes real firmware, MTK bus timing, physical keys, IRQ and HID consumers. The area remains planned as an end-to-end input capability."]
 completion = ["Touches map to the display, simultaneous contacts keep stable IDs, release events arrive, and buttons produce expected HID reports."]
 limits = ["Novatek tests model NT36532-family behavior, not a physical yunluo sensor. No real firmware blob, SPI rate, IRQ or HID consumer path is qualified here."]
 next_action = ["Run scoped host regressions and qualify the actual sensor/firmware/bus/HID ABI before claiming touch works."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." },
+  { kind = "host", reference = "docs/evidence/pmic-state.txt", result = "PASS under ASan/UBSan: 4096 PMIC state combinations and polling cases; register model only.", command = "/usr/bin/g++ -O1 -g -Wall -Wextra -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -std=c++17 tests/board-key-state.cpp -o /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/host-committed/pmic-state && /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/host-committed/pmic-state", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" },
+  { kind = "host", reference = "docs/evidence/novatek-protocol-model.txt", result = "PASS under ASan/UBSan: reusable protocol model; real-firmware cases explicitly skipped.", command = "/usr/bin/gcc -O1 -g -Wall -Wextra -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -std=c11 drivers/NativeNovatekTouch/Test/nvt-protocol.c drivers/NativeNovatekTouch/NvtProtocol.c -o /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/host-committed/novatek-protocol-model && /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/host-committed/novatek-protocol-model", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" },
+  { kind = "host", reference = "docs/evidence/novatek-touch-core-model.txt", result = "PASS under ASan/UBSan: synthetic contact/core model; no physical sensor or HID client qualified.", command = "/usr/bin/gcc -O1 -g -Wall -Wextra -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer -std=c11 drivers/NativeNovatekTouch/Test/touch-core.c drivers/NativeNovatekTouch/NvtTouchCore.c -lm -o /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/host-committed/novatek-touch-core-model && /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/host-committed/novatek-touch-core-model", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" }
+]
 
 [[area]]
 id = "gpu"
@@ -116,7 +138,9 @@ findings = ["GPU/Metal acceleration is planned and unsupported, not declared not
 completion = ["GPU submissions complete, mapping/fence handling is correct, a known image renders, and the selected Metal client presents it."]
 limits = ["GPU/Metal acceleration is planned and unsupported, not declared not-applicable to a device with a GPU."]
 next_action = ["Inventory the actual Mali submission, memory/fence and presentation interfaces before choosing an implementation."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." }
+]
 
 [[area]]
 id = "network"
@@ -130,7 +154,9 @@ findings = ["Association and packet transfer are unimplemented; this is not not-
 completion = ["Scanning, association, address configuration and sustained receive/transmit traffic pass with the selected firmware."]
 limits = ["Association and packet transfer are unimplemented; this is not not-applicable."]
 next_action = ["Inventory verified wireless resources and choose an implementation compatible with this board."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." }
+]
 
 [[area]]
 id = "audio"
@@ -144,7 +170,9 @@ findings = ["Playback/capture are not implemented or verified."]
 completion = ["Each declared route carries the selected audio format through playback or capture and handles start/stop correctly."]
 limits = ["Playback/capture are not implemented or verified."]
 next_action = ["Establish the actual MTK audio resources and services before porting a route."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." }
+]
 
 [[area]]
 id = "power"
@@ -158,21 +186,27 @@ findings = ["Sleep/resume, battery and peripheral power transitions remain unqua
 completion = ["Declared power controls and battery readings match observations; each claimed sleep/resume transition restores its dependent peripherals."]
 limits = ["Sleep/resume, battery and peripheral power transitions remain unqualified."]
 next_action = ["Identify source-confirmed controls and define per-transition observable tests."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." }
+]
 
 [[area]]
 id = "packaging"
 status = "planned"
 components = ["XnuPrelink"]
-paths = ["partition-layout.toml", "patches/**", "scripts/*image*", "scripts/*payload*"]
+paths = ["partition-layout.toml", "patches/**", "scripts/*image*", "scripts/*payload*", "partition-layout.toml", "scripts/check-partition-layout.py"]
 inputs = ["XNU 10063.141.1/21H461 ABI inputs and separately built Mu boot and UniXNU cust images."]
 configuration = ["No UniXNU payload in boot ramdisk. Exact cust image size/filesystem awaits partition evidence."]
 procedure = ["Use the corresponding current UniXNU common guide; preserve source pins and collect the result before progressing.", "Implement and test two-artifact manifests, boot payload exclusion and exact cust EFI/kernel/ADT contents before usability testing."]
-findings = ["No complete archive/bootstrap chain, kernel/prelink or split image build has passed; current upstream boot packer is not proven for this board v4 path."]
-completion = ["Kernel and prelink succeed, payload contains all declared inputs, and the boot image matches the bootloader format and size limit."]
+findings = ["No complete archive/bootstrap chain, kernel/prelink or split image build has passed; current upstream boot packer is not proven for this board v4 path.", "Boot-Mu/cust-UniXNU separation is enforced as a source-policy and release gate; cust geometry/discovery remain unknown, so the build-readiness gate correctly refuses progression."]
+completion = ["Separate boot firmware and cust UniXNU artifacts build from reviewed source pins; boot contains no UniXNU payload ramdisk; cust contains all declared EFI/runtime/kernel/ADT inputs.", "An explicitly authorized device test identifies both artifact hashes and proves Mu loads the intended cust path, not an old ramdisk or unrelated ESP."]
 limits = ["No complete archive/bootstrap chain, kernel/prelink or split image build has passed; current upstream boot packer is not proven for this board v4 path."]
 next_action = ["Implement and test two-artifact manifests, boot payload exclusion and exact cust EFI/kernel/ADT contents before usability testing."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." },
+  { kind = "host", reference = "docs/evidence/split-policy-fixtures.txt", result = "PASS: split-header fixture accepted; embedded payload, empty/truncated kernel rejected. Fixture/header scope only.", command = "python3 /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/scripts/check-partition-layout.py --self-test /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/out/structural-committed/fixtures", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" },
+  { kind = "host", reference = "docs/evidence/old-monolithic-image-rejection.txt", result = "Expected refusal: protected historical monolithic image contains a nonempty boot ramdisk. No image changed.", command = "python3 /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo/scripts/check-partition-layout.py --boot-image /mnt/d/\u6f0f\u6d1e/UNIXNU/bringup/uefi/boot-yunluo-unixnu-inputfix6-smp8-mmioipi-2g.img", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" }
+]
 
 [[area]]
 id = "diagnostics"
@@ -186,4 +220,8 @@ findings = ["No proposed-branch device log exists. Historical logs are not relab
 completion = ["Each claimed milestone has a reproducible command, a matching source/image revision and an accessible result."]
 limits = ["No proposed-branch device log exists. Historical logs are not relabeled as fresh test evidence."]
 next_action = ["Record real commands/results and full source revisions, then run the official normal and --base checks."]
-evidence = []
+evidence = [
+  { kind = "source", reference = "docs/evidence/source-scope.md", result = "Explicit source/qualification boundary and outstanding runtime work; no new device proof." },
+  { kind = "host", reference = "docs/evidence/record-check.txt", result = "PASS: official checker validates the 13-area record schema and declared component coverage; not usability.", command = "python3 /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/UniXNU/scripts/porting-record.py check --device /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" },
+  { kind = "host", reference = "docs/evidence/record-base-check.txt", result = "PASS: proposed committed code changes have record ownership against porting-import-base.", command = "python3 /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/UniXNU/scripts/porting-record.py check --device /home/ubuntu/unixnu-ext4/yunluo-upstream-20261030/release/UniXNU-yunluo --base porting-import-base", revision = "238f33cda2750f52c19748607cee6ca56f56e2a3" }
+]
