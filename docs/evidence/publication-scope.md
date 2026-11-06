@@ -19,11 +19,13 @@ identities, not published upstream ancestry. The overlay's source manifest
 records the archive SHA-256 and exclusions. ACPI/private input recipes and
 complete public dependency pins remain outstanding.
 
-Historical user reports establish the v1 menu and fixed-window allocation
-failure, not v2 XNU entry or a desktop. The source and offline cust-v2 readback
-support the largest-contiguous-window policy, but do not establish its new
-device allocation. Do not bridge firmware reservations or inflate boot_args.
+The preserved device record establishes visible UEFI/XNU output, UFS LU2 and
+APFS root, launchd, the activation page, usable touch, eight-core MMIO IPI and
+a 2 GiB XNU owned-memory window. Setup initialization later reached PID1
+SIGBUS, and four-corner touch calibration, GPU, audio, networking and complete
+power management remain open.
 
-All end-to-end areas remain planned. Host arithmetic/protocol models are not
-hardware tests. The build-readiness gate is intentionally retained; a complete
-runtime migration, fresh build and matching device evidence are future work.
+The public source tree still has to reproduce the full runtime archive set and
+the current split boot/cust layout. Host arithmetic and protocol models remain
+host evidence; the named device milestones are documented separately in
+`device-progress-2026-10-29.md`.

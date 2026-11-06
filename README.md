@@ -1,46 +1,65 @@
-# yunluo upstream candidate
+# Xiaomi Redmi Pad (yunluo)
 
-This is a clean, separately initialized publication candidate, not a rewrite of the preserved legacy history. Reviewed source is imported from the local yunluo checkpoint 2551dfe8ec21d0c6711139058ef70f08edf7a220; the full original Git remains preserved outside this repository. No proprietary firmware array, Apple input, image, Data seed or original recovery history is imported.
+UniXNU device repository for the Xiaomi Redmi Pad (`yunluo`, MediaTek MT6789 / Helio G99).
 
-The port is not yet build-qualified or device-verified. This initial public WIP
-is for source review and collaboration, not a usable-system release. Read
-porting.toml for authoritative scope and limits. A complete runtime build and
-the corresponding device observations remain required for a completed-port claim.
+The tested baseline runs the iPadOS 17.7.11 / 21H461 userspace on yunluo through Mu-Silicium UEFI and XNU. It reaches the activation screen, supports touch input, starts all eight CPUs and uses a 2 GiB XNU memory window.
 
-## Required partition layout
+## Tested status
 
-Mu-Silicium UEFI belongs in boot. UniXNU EFI/kit, file-loaded DarwinBoot, XNU kernel and payload inputs belong separately in cust. The old payload-FAT-in-boot-ramdisk route is not the target. No device write is authorized by these files. See partition-layout.toml and the firmware/storage/packaging areas in porting.toml.
+| Area | Result |
+| --- | --- |
+| UEFI and display | UEFI output and the XNU console are visible; the activation page has been reached |
+| Storage | UFS LU2, 4096-byte blocks, APFS root and launchd are working |
+| Display | 1200x2000 panel presentation works, including the 180-degree UI configuration |
+| Touch | Touch input is usable on the `inputfix4` baseline |
+| CPU | Eight-core startup and MMIO IPI delivery are working |
+| Memory | The 2 GiB XNU owned-memory profile is usable |
+| Userland | Launchd, Setup and the activation UI have been reached |
 
-## Current scope and dependencies
+Still open: Setup initialization currently ends with PID1 `SIGBUS`, GPU acceleration is not available, and audio, Wi-Fi, Bluetooth and full power management remain incomplete. Touch calibration at all four panel corners has not been recorded.
 
-This is a format-2 qualification scaffold, not the full recovered functional system.
-It uses the ARM64 and ipados-17.7.11-21H461 profiles and pins
-[MT6789 common](https://github.com/woaphone/UniXNU-mt6789-common) in feeds.toml.
-The reviewed firmware source overlay is maintained in
-[uefi-yunluo](https://github.com/yunluo-uefi-development/uefi-yunluo).
-Complete MTK runtime/archive integration, private-input recipes, CPU ADT
-consumer checks and a clean split-image build remain outstanding.
-Qualcomm-only helpers and the old embedded vendor firmware array are excluded.
+## Hardware
 
-The cust-v2 largest-window loader is published as a source reference in
-`loader/`, with a production-helper test. It is not yet selected by the
-format-2 build; publishing this reference does not silently change the board's
-loader or establish a new device result.
+| Item | Value |
+| --- | --- |
+| Device | Xiaomi Redmi Pad |
+| Codename | `yunluo` |
+| SoC | MediaTek MT6789 / Helio G99 |
+| CPU | 6x Cortex-A55 + 2x Cortex-A76 |
+| Timer | 13 MHz |
+| Storage | UFS, LU2 user data, 4096-byte logical blocks |
+| Panel | 1200x2000, 2048-pixel scanline |
+| Userspace donor | iPad7,1, iPadOS 17.7.11 / 21H461 |
 
-## Reproducible host checks
+## Source layout
 
-From this repository, use a fresh retained output directory:
+| Repository | Responsibility |
+| --- | --- |
+| [`woaphone/xnu-mtk`](https://github.com/woaphone/xnu-mtk) | XNU source and per-device kernel branches |
+| [this repository](https://github.com/woaphone/UniXNU-yunluo) | Board resources, drivers, patches, payload and image assembly |
+| [`yunluo-uefi-development/uefi-yunluo`](https://github.com/yunluo-uefi-development/uefi-yunluo) | UEFI platform and DarwinBoot integration |
+| [`woaphone/UniXNU-mt6789-common`](https://github.com/woaphone/UniXNU-mt6789-common) | Shared MT6789 configuration and device-tree source |
+
+The XNU source is pinned by `feeds.toml` to branch `yunluo` at `53bc420e5acda41c1689f6690a85841393a347cf`.
+
+## Build
+
+From a UniXNU checkout:
 
 ```sh
-python3 scripts/run-host-tests.py --output out/host-NEW
-python3 scripts/check-partition-layout.py --self-test out/split-fixtures-NEW
-python3 scripts/check-partition-layout.py --require-build-ready
+./unixnu defconfig yunluo_defconfig -D ../UniXNU-yunluo
+./unixnu fetch -D ../UniXNU-yunluo
+./unixnu status --json -D ../UniXNU-yunluo
+./unixnu tree -D ../UniXNU-yunluo
+python3 scripts/porting-record.py check --device ../UniXNU-yunluo
 ```
 
-The last command intentionally refuses until cust geometry/filesystem/load-path evidence exists. From the pinned UniXNU checkout run the normal porting-record checker and --base porting-import-base. See committed docs/evidence for exact tested source revisions and commands.
+Proprietary IPSW, firmware, Data seeds and generated images stay outside Git. Device-specific build overrides belong in the ignored `local.toml`.
 
-Host protocol/key-state models, DTS/ADT generation and configuration validation
-have passed on the recorded source. Real sensor-firmware tests were skipped.
-No complete format-2 kernel/prelink/split-image build or new device boot is
-qualified; every end-to-end area stays planned. See
-`docs/evidence/publication-scope.md` for the initial publication boundary.
+## Evidence
+
+The condensed device milestone record is in [`docs/evidence/device-progress-2026-10-29.md`](docs/evidence/device-progress-2026-10-29.md). The authoritative configuration and per-area progress are in [`porting.toml`](porting.toml).
+
+## License
+
+BSD-2-Clause-Patent. See [LICENSE](LICENSE).

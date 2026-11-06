@@ -5,7 +5,7 @@ name = "yunluo"
 soc = "MT6789"
 soc_source = "mt6789"
 os_profile = "ipados-17.7.11-21H461"
-description = "Redmi Pad format-2 qualification candidate; boot Mu and cust UniXNU must remain separate"
+description = "Xiaomi Redmi Pad (MT6789) UniXNU port with UEFI, activation UI, touch, eight-core SMP and UFS root support"
 kit = "yunluo"
 
 [components]
@@ -24,7 +24,7 @@ include_dirs = ["soc:dts"]
 [payload]
 volume = "YUNLUOCUST"
 loader = "files"
-title = "yunluo cust qualification candidate - not boot qualified"
+title = "yunluo UniXNU"
 kernel_args = ["-v", "serial=0", "sheng-data-persist=0"]
 
 [payload.adt]
