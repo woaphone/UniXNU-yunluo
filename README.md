@@ -44,6 +44,13 @@ The XNU source is pinned by `feeds.toml` to branch `yunluo` at `53bc420e5acda41c
 
 ## Build
 
+The previously local MT6789 UFS implementation is now available in
+[`drivers/NativeMtkUfs`](drivers/NativeMtkUfs), including bounded
+READ recovery, its production-policy tests, license/provenance and an archive
+build helper. Its README distinguishes the recovered device baseline from the
+new recovery code's offline qualification. The default configuration below is
+still a qualification scaffold, not the complete recovered system recipe.
+
 From a UniXNU checkout:
 
 ```sh

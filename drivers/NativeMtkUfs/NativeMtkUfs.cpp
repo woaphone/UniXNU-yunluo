@@ -1,16 +1,16 @@
 // SPDX-License-Identifier: BSD-2-Clause-Patent
 //
-// MediaTek MT6789 (Xiaomi "yunluo") UFS host driver, first bring-up version.
+// MediaTek MT6789 (Xiaomi "yunluo") UFS host driver.
 //
-// The register-level behaviour follows docs/UFS_MT6789_PORT_SPEC.md, which is
-// source-derived from the vendor kernel tree and has never been run on this
-// device.  Stages 1..10 below correspond one-to-one with the stage list in the
-// porting task; native_mtkufs_stage always names the last stage that completed,
-// so a later image can report where bring-up stopped.
+// Originally implemented from the local UFS_MT6789_PORT_SPEC and vendor
+// register definitions. See README.md for the recovered source provenance,
+// tested baseline and the untested-on-device READ recovery addition.
+// native_mtkufs_stage names the last completed bring-up stage.
 //
 // This driver is deliberately polled: no interrupt handler is registered and
 // all completion waits are bounded by mach_absolute_time()/clock_interval_to_deadline().
-// Nothing is written to the UFS storage medium; the published media is read-only.
+// OS media is read-only. Data/Log have bounded LU2 write paths; this driver
+// must not be described as an entirely read-only controller.
 //
 // Stage map (native_mtkufs_stage names the last completed stage):
 //   1 provider matched            6 HCE + UIC interrupts enabled
@@ -36,6 +36,7 @@
 #include <libkern/libkern.h>
 #include <kern/clock.h>
 #include <kern/task.h>
+#include "ReadRecovery.h"
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wdeprecated-volatile"
 #pragma clang diagnostic ignored "-Wignored-attributes"
@@ -580,6 +581,11 @@ class NativeMtkUfs : public IOService {
   IOService *ufsProvider = nullptr;
   uint32_t hwMajor = 2;
   bool utpReady = false;
+  bool readRecoveryEnabled = false;
+  bool lastReadTransportFailure = false;
+  unsigned readRecoveryAttempts = 0;
+  bool recoverReadTransport();
+  bool readDeviceBlocksRecovering(uint64_t lba, uint32_t blocks, void *out);
   bool online = false;
   uint8_t lastScsiSenseKey = 0xFF;
   bool installBlockMediaDispatch();
@@ -2312,17 +2318,76 @@ bool NativeMtkUfs::readDeviceBlocks(uint64_t lba, uint32_t blocks, void *out)
     return gBlockMedia->readDeviceBlocks(lba, blocks, out);
   }
   if (!gUtpGate) {
-    return readDeviceBlocksLocked(lba, blocks, out);
+    return readDeviceBlocksRecovering(lba, blocks, out);
   }
   utpGateLockTracked();
-  const bool ok = readDeviceBlocksLocked(lba, blocks, out);
+  const bool ok = readDeviceBlocksRecovering(lba, blocks, out);
   utpGateUnlockTracked();
   return ok;
+}
+
+bool NativeMtkUfs::readDeviceBlocksRecovering(uint64_t lba, uint32_t blocks, void *out)
+{
+  return native_mtkufs::readWithRecovery(readRecoveryEnabled,
+      [this, lba, blocks, out]() {
+        if (readDeviceBlocksLocked(lba, blocks, out))
+          return native_mtkufs::ReadResult::success;
+        if (lastReadTransportFailure) return native_mtkufs::ReadResult::transport;
+        if (lastScsiSenseKey == 0x06) return native_mtkufs::ReadResult::unitAttention;
+        return native_mtkufs::ReadResult::failure;
+      }, [this]() { return recoverReadTransport(); });
+}
+
+// Called only for a failed READ while the shared transport gate is held.
+// HelioDarwin 0186 motivates bounded retries; this port requires a completed
+// HCE reset, link/NOP and unchanged LU geometry before any descriptor reuse.
+// Never invoke resetDeviceAndHost(), WRITE_ATTR or WRITE(10) from this path.
+bool NativeMtkUfs::recoverReadTransport()
+{
+  if (secondaryWindow || !readRecoveryEnabled || readRecoveryAttempts >= 2 ||
+      !lastReadTransportFailure || !deviceCapacityBlocks) return false;
+  ++readRecoveryAttempts;
+  utpReady = false;
+  kprintf("YUNLUO-UFS recover-read attempt=%u HCE=%x DBR=%x\n",
+          readRecoveryAttempts, readUfs(kHce), readUfs(kUtrlDoorbell));
+  writeUfs(kUtrlRunStop, 0);
+  writeUfs(kUtmrRunStop, 0);
+  dmaBarrier();
+  writeUfs(kHce, 0);
+  dmaBarrier();
+  if (!waitUfsMask(kHce, 1, 0, 100000, 1000) ||
+      !waitUfsMask(kUtrlDoorbell, 0xffffffffU, 0, 100000, 1000)) {
+    kprintf("YUNLUO-UFS recovery refused: controller did not quiesce\n");
+    return false;
+  }
+  // Only the acknowledged disabled controller makes DMA memory reusable.
+  bzero(hostBytesPtr, hostBytes);
+  cleanDcache(hostBytesPtr, hostBytes);
+  if (!enableHostController() || !linkStartup() || !sendNop()) {
+    utpReady = false;
+    return false;
+  }
+  writeUfs(kAhit, 0);  // retain the verified non-hibernating read policy
+  uint8_t unit[0xFF] = {};
+  uint32_t length = 0;
+  if (!readDescriptor(kDescUnit, kUserLun, unit, sizeof(unit), &length) ||
+      length < 0x13 || !isUsableUserUnitDescriptor(unit) ||
+      unit[kUnitDescBlockSize] < 9 || unit[kUnitDescBlockSize] > 20 ||
+      (1U << unit[kUnitDescBlockSize]) != deviceBlockSize ||
+      getBe64(unit + kUnitDescBlockCount) != deviceCapacityBlocks ||
+      unit[kUnitDescWriteProtect] != unitWriteProtect) {
+    utpReady = false;
+    kprintf("YUNLUO-UFS recovery refused: LU identity/geometry changed\n");
+    return false;
+  }
+  kprintf("YUNLUO-UFS read transport restored; retry original READ once\n");
+  return true;
 }
 
 bool NativeMtkUfs::readDeviceBlocksLocked(uint64_t lba, uint32_t blocks, void *out)
 {
   lastScsiSenseKey = 0xFF;
+  lastReadTransportFailure = false;
   if (!utpReady || !deviceBlockSize || blocks == 0 || blocks > 0xFFFFU) {
     return false;
   }
@@ -2368,9 +2433,11 @@ bool NativeMtkUfs::readDeviceBlocksLocked(uint64_t lba, uint32_t blocks, void *o
 
   uint32_t ocs = kOcsInvalid;
   if (!runUtp(tag, utpCommandType(false), kUtpDeviceToHost, bytes, 5000, &ocs)) {
+    lastReadTransportFailure = true;
     return false;
   }
   if (ocs != 0) {
+    lastReadTransportFailure = true;
     native_mtkufs_utp_errors = native_mtkufs_utp_errors + 1;
     kprintf("NativeMtkUfs: READ(10) lba=%llu blocks=%u OCS=0x%x\n",
             static_cast<unsigned long long>(lba), blocks, ocs);
@@ -3925,6 +3992,9 @@ bool NativeMtkUfs::start(IOService *provider)
     return IOService::start(provider);
   }
   ufsProvider = provider;
+  unsigned recoverReads = 0;
+  PE_parse_boot_argn("yunluo-ufs-read-recover", &recoverReads, sizeof(recoverReads));
+  readRecoveryEnabled = recoverReads == 1;
   if (!IOService::start(provider)) {
     return false;
   }

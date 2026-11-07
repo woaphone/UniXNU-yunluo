@@ -1,0 +1,14 @@
+NativeMtkUfs for yunluo / MediaTek MT6789
+
+Original implementation: the preserved UniXNU yunluo source checkpoint
+2f7e5ed. The first publication retains that C++ file unchanged.
+
+Bounded READ recovery: local UniXNU checkpoint
+ba139a18248b65dc7c890bfe35e4bc5e87623112, informed by HelioDarwin patch 0186
+at e04035ebe905a7d41926ee4582a601cb114f8bc4.
+Reference: https://github.com/squeeeezy/HelioDarwin
+The reference project's MIT license is retained in LICENSE.HelioDarwin.
+
+These checkpoint IDs describe local source provenance, not commits claimed to
+have been accepted by the upstream UniXNU organization. No proprietary IPSW,
+firmware, device dump or private device-identity input is included.
